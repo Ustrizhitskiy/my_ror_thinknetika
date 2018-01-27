@@ -1,30 +1,26 @@
 total_sum = 0
 
-hash_product_cost_quantity = {}       # Хэш для общей стоимости одного продукта
-hash_cost_quantity = {}               # Хэш для записи стоимости и количества каждого продукта
 hash_products = {}                    # Хэш для всех покупок
 
 loop do
-  print "Введите товар, который желаете приобрести: "
+  print 'Введите товар, который желаете приобрести: '
   product = gets.chomp.to_s
   break if product == 'стоп'
-  print "По какой цене хотели бы приобрести: "
+  print 'По какой цене хотели бы приобрести: '
   cost = gets.chomp.to_f
-  print "Сколько товара желаете приобрести: "
+  print 'Сколько товара желаете приобрести: '
   quantity = gets.chomp.to_f
 
-  total_sum += cost * quantity
+  total_one_product = cost * quantity
 
-  hash_product_cost_quantity[product] = cost * quantity
-  hash_cost_quantity[cost] = quantity
-  hash_products[product] = hash_cost_quantity
-  hash_cost_quantity = {}
+  total_sum += total_one_product
+
+  hash_products[product] = {cost: cost, quantity: quantity, total_one_product: total_one_product}
 end
 
 puts hash_products
-puts hash_product_cost_quantity
-puts "Ваши покупки:"
-hash_product_cost_quantity.each do | product, quantity |
-  puts "Вы купили #{product} на #{quantity} рублей."
+puts 'Ваши покупки:'
+hash_products.each do |product, all_quality|
+  puts "Вы купили #{product} на #{all_quality[:total_one_product]} рублей."
 end
 puts "Ваши покупки в корзине на сумму: #{total_sum} рублей."
