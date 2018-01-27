@@ -2,8 +2,8 @@ arr_vowel = %w(a e i o u y)
 arr_alphabet = ('a'..'z').to_a
 hash_vowel = {}
 
-arr_alphabet.each_with_index do |key, index|
-  hash_vowel[key] = index + 1 if arr_vowel.include?(key)
+arr_alphabet.each.with_index(1) do |key, index|
+  hash_vowel[key] = index if arr_vowel.include?(key)
 end
 puts hash_vowel
 
