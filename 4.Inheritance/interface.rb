@@ -92,7 +92,7 @@ class Interface
       @cargo_trains << cargo_train
       @all_trains << cargo_train
       puts "Вы создали поезд:"
-      puts "#Номер: #{number}\nТип: #{cargo_train.type}"
+      puts "#Номер: #{number}\nТип: грузовой"
       return_to_menu
     when 2
       print "Введите номер или название поезда: "
@@ -101,7 +101,7 @@ class Interface
       @passenger_trains << passenger_train
       @all_trains << passenger_train
       puts "Вы создали поезд:"
-      puts "#Номер: #{number}\nТип: #{passenger_train.type}"
+      puts "#Номер: #{number}\nТип: пассажирский"
     end
   end
 
@@ -233,7 +233,7 @@ class Interface
   def add_wagon_to_train
     show_all_trains
     train = train_choice
-    if train.type == :Cargo
+    if train.class == CargoTrain
       wagon = CargoWagon.new
       train.add_wagon(wagon)
     else
@@ -241,7 +241,7 @@ class Interface
       train.add_wagon(wagon)
     end
 
-    puts "Номер: #{train.number}, вагонов: #{train.wagons.size}, тип - #{train.type}"
+    puts "Номер: #{train.number}, вагонов: #{train.wagons.size}, тип - #{train.class}"
     return_to_menu
   end
 
@@ -249,7 +249,7 @@ class Interface
     show_all_trains
     train = train_choice
     train.delete_wagon
-    puts "Номер: #{train.number}, вагонов: #{train.wagons.size}, тип - #{train.type}"
+    puts "Номер: #{train.number}, вагонов: #{train.wagons.size}, тип - #{train.class}"
     return_to_menu
   end  
 
@@ -281,7 +281,7 @@ class Interface
 
   def show_all_trains
     @all_trains.each.with_index(1) { |train, index|
-      puts "#{index} | #{train.number} - #{train.type}" }
+      puts "#{index} | Номер (название): #{train.number}; вагонов: #{train.wagons.size}; тип - #{train.class}" }
   end
 
   def train_choice

@@ -1,12 +1,9 @@
 class PassengerTrain < Train
 
-  def initialize(number)
-    super
-    @type = :Passenger
-  end
+  private     # чтобы можно было вызвать только внутри класса PassengerTrain
 
-  def add_wagon(wagon)
-    @wagons << wagon if @speed == 0 && wagon.type == :Passenger
+  def is_right_type(wagon)
+    wagon.is_a?PassengerWagon
   end
 
 end

@@ -1,6 +1,6 @@
 class Train
 
-  attr_reader :number, :type, :route, :wagons
+  attr_reader :number, :route, :wagons
   attr_writer :speed
 
   def initialize(number)
@@ -11,6 +11,10 @@ class Train
 
   def stop
     self.speed = 0
+  end
+
+  def add_wagon(wagon)
+    @wagons << wagon if @speed == 0 && is_right_type(wagon)
   end
 
   def delete_wagon
