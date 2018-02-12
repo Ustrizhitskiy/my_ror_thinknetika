@@ -10,10 +10,9 @@ class Interface
     @all_routes = []
   end
 
-  puts 'Hello'
+  puts 'Добро пожаловать.'
 
   def menu
-    puts 'Добро пожаловать.'
     puts 'Для выбора действия, введите его номер:'
     puts '1.  Создать станцию.'
     puts '2.  Создать поезд.'
@@ -28,7 +27,8 @@ class Interface
     puts '11. Просмотреть список станций.'
     puts '12  Просмотреть все созданные поезда.'
     puts '13. Просмотреть список поездов, находящихся на станции.'
-    puts '14. Просмотреть все маршруты.'
+    puts '14. Найти поезд по номеру (названию).'
+    puts '15. Просмотреть все маршруты.'
     puts '0.  Выйти из программы.'
   end
 
@@ -58,13 +58,19 @@ class Interface
       when 10
         move_previos_station
       when 11
+        puts "\nВсего создано #{Station.instances} станций."
         all_stations
       when 12
+        puts "\nВсего создано #{CargoTrain.instances + PassengerTrain.instances} поездов."
         show_all_trains
         return_to_menu
       when 13
         show_all_trains_on_station
       when 14
+        finding_train
+        return_to_menu
+      when 15
+        puts "\nВсего создано #{Route.instances} маршрутов."
         show_all_routes
         return_to_menu
       when 0
@@ -90,27 +96,34 @@ class Interface
     puts 'Какой поезд (пассажирский или грузовой) хотите создать?'
     puts '1. Грузовой.'
     puts '2. Пассажирсий.'
+
     type_wagon = gets.chomp.to_i
+
     case type_wagon
     when 1
       print 'Введите номер или название поезда: '
       number = gets.chomp.to_s
-      train = CargoTrain.new(number)
+      print 'Введите производителя: '
+      manufacturer = gets.chomp.to_s
+      train = CargoTrain.new(number, manufacturer)
       @cargo_trains << train
       @all_trains << train
-      puts 'Вы создали поезд:'
-      puts "#Номер: #{number}\nТип: грузовой\n"
+      puts "\nВы создали поезд:"
+      puts "Номер: #{number}\nПроизводитель: #{manufacturer}\nТип: грузовой\n"
       add_train_to_station?(train)
     when 2
       print 'Введите номер или название поезда: '
       number = gets.chomp.to_s
-      train = PassengerTrain.new(number)
+      print 'Введите производителя: '
+      manufacturer = gets.chomp.to_s
+      train = PassengerTrain.new(number, manufacturer)
       @passenger_trains << train
       @all_trains << train
-      puts 'Вы создали поезд:'
-      puts "#Номер: #{number}\nТип: пассажирский"
+      puts "\nВы создали поезд:"
+      puts "Номер: #{number}\nПроизводитель: #{manufacturer}\nТип: пассажирский\n"
       add_train_to_station?(train)
     end
+
     return_to_menu
   end
 
@@ -127,7 +140,7 @@ class Interface
   def choose_station_to_add_train(train)
     show_all_stations
     print 'На какую станцию добавить поезд (выберете номер из списка)? '
-    number = gets.chomp.to_i
+    number = gets.to_i
     @all_stations.each.with_index(1) { |station, index|
     station.parking_trains(train) if number == index }
     puts "Вы добавили поезд №_#{train.number} на станцию #{@all_stations[number - 1].name}."
@@ -262,14 +275,18 @@ class Interface
     show_all_trains
     train = train_choice
     if train.class == CargoTrain
-      wagon = CargoWagon.new
+      print 'Введите производителя вагона: '
+      manufacturer = gets.to_s
+      wagon = CargoWagon.new(manufacturer)
       train.add_wagon(wagon)
     else
-      wagon = PassengerWagon.new
+      print 'Введите производителя вагона: '
+      manufacturer = gets.to_s
+      wagon = PassengerWagon.new(manufacturer)
       train.add_wagon(wagon)
     end
-
-    puts "Номер: #{train.number}, вагонов: #{train.wagons.size}, тип - #{train.class}"
+    puts "\nВы добавили вагон."
+    puts "Номер поезда: #{train.number}, вагонов: #{train.wagons.size}, тип - #{train.class}"
     return_to_menu
   end
 
@@ -277,7 +294,8 @@ class Interface
     show_all_trains
     train = train_choice
     train.delete_wagon
-    puts "Номер: #{train.number}, вагонов: #{train.wagons.size}, тип - #{train.class}"
+    puts "\nВы удалали вагон."
+    puts "Номер поезда: #{train.number}, вагонов: #{train.wagons.size}, тип - #{train.class}"
     return_to_menu
   end  
 
@@ -294,7 +312,7 @@ class Interface
   end
 
   def show_all_stations
-    @all_stations.each.with_index(1) { |station, index|
+    Station.all_instances.each.with_index(1) { |station, index|
       puts "#{index}. #{station.name}" }
   end
 
@@ -327,6 +345,18 @@ class Interface
     print 'Выберите поезд (введите порядковый номер) из списка: '
     number = gets.chomp.to_i
     train = @all_trains[number - 1]
+  end
+
+  def finding_train
+    #puts Train.all_trains_objects
+    puts 'Введите номер (название) поезда, о котором хотите получить информацию: '
+    number = gets.chomp.to_s
+      if Train.find_train(number)
+        puts 'Поезд найден:'
+        Train.about_train(number)
+      else
+        puts 'Поезда с таким номером (названием) не найдено.'
+      end
   end
 
 end
