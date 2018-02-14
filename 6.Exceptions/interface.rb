@@ -1,4 +1,6 @@
 class Interface
+  include Validation
+
   attr_reader :all_stations, :all_trains, :all_routes, :cargo_trains,
     :passenger_trains, :count, :selected_route, :get_route_number, :a
 
@@ -61,7 +63,7 @@ class Interface
         puts "\nВсего создано #{Station.instances} станций."
         all_stations
       when 12
-        puts "\nВсего создано #{CargoTrain.instances + PassengerTrain.instances} поездов."
+        puts "\nВсего создано #{CargoTrain.instances} грузовых и #{PassengerTrain.instances} пассажирских поездов."
         show_all_trains
         return_to_menu
       when 13
@@ -93,38 +95,44 @@ class Interface
   end
 
   def create_new_train
-    puts 'Какой поезд (пассажирский или грузовой) хотите создать?'
-    puts '1. Грузовой.'
-    puts '2. Пассажирсий.'
+    begin
+      puts 'Какой поезд (пассажирский или грузовой) хотите создать?'
+      puts '1. Грузовой.'
+      puts '2. Пассажирсий.'
+      puts 'Введите любой другой символ и нажмите ENTER для возврата в меню...'
 
-    type_wagon = gets.chomp.to_i
+      type_wagon = gets.chomp.to_i
 
-    case type_wagon
-    when 1
-      print 'Введите номер или название поезда: '
-      number = gets.chomp.to_s
-      print 'Введите производителя: '
-      manufacturer = gets.chomp.to_s
-      train = CargoTrain.new(number, manufacturer)
-      @cargo_trains << train
-      @all_trains << train
-      puts "\nВы создали поезд:"
-      puts "Номер: #{number}\nПроизводитель: #{manufacturer}\nТип: грузовой\n"
-      add_train_to_station?(train)
-    when 2
-      print 'Введите номер или название поезда: '
-      number = gets.chomp.to_s
-      print 'Введите производителя: '
-      manufacturer = gets.chomp.to_s
-      train = PassengerTrain.new(number, manufacturer)
-      @passenger_trains << train
-      @all_trains << train
-      puts "\nВы создали поезд:"
-      puts "Номер: #{number}\nПроизводитель: #{manufacturer}\nТип: пассажирский\n"
-      add_train_to_station?(train)
+      case type_wagon
+        when 1
+          print 'Введите номер или название поезда в формате ххх-хх или ххххх: '
+          number = gets.chomp.to_s
+          print 'Введите производителя: '
+          manufacturer = gets.chomp.to_s
+          train = CargoTrain.new(number, manufacturer)
+          @cargo_trains << train
+          @all_trains << train
+          puts "\nВы создали поезд:"
+          puts "Номер: #{number}\nПроизводитель: #{manufacturer}\nТип: грузовой\n"
+          add_train_to_station?(train)
+        when 2
+          print 'Введите номер или название поезда в формате ххх-хх или ххххх: '
+          number = gets.chomp.to_s
+          print 'Введите производителя: '
+          manufacturer = gets.chomp.to_s
+          train = PassengerTrain.new(number, manufacturer)
+          @passenger_trains << train
+          @all_trains << train
+          puts "\nВы создали поезд:"
+          puts "Номер: #{number}\nПроизводитель: #{manufacturer}\nТип: пассажирский\n"
+          add_train_to_station?(train)
+      end
+
+      rescue RuntimeError => e
+        puts e.message
+        puts "Попробуйте еще раз.\n"
+      retry
     end
-
-    return_to_menu
   end
 
   def add_train_to_station?(train)
