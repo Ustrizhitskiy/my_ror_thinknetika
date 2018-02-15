@@ -87,6 +87,8 @@ class Train
     raise "\nНеправильный формат номера. Необходимо: ххх-хх, где х - любая буква латинского алфавита или цифра." if 
       @number !~ NUMBER_FORMAT
     raise "\nПоезд с таким номером уже существует!" if @@all_trains_objects.include? @number
+
+    true
   end
 
 end

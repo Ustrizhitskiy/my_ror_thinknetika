@@ -63,7 +63,7 @@ class Interface
         puts "\nВсего создано #{Station.instances} станций."
         all_stations
       when 12
-        puts "\nВсего создано #{CargoTrain.instances} грузовых и #{PassengerTrain.instances} пассажирских поездов."
+        puts "\nВсего создано #{[CargoTrain.instances, PassengerTrain.instances].compact.inject(&:+)} поездов."
         show_all_trains
         return_to_menu
       when 13
@@ -138,7 +138,7 @@ class Interface
   def add_train_to_station?(train)
     print "Добавить поезд на станцию ('Y'/'N')? "
     yes_no = gets.chomp.to_s
-    if yes_no == 'y' || yes_no == 'Y'
+    if ['y', 'Y'].include?(yes_no)
       choose_station_to_add_train(train)
     else
       puts 'Позже это все равно надо будет сделать.'
@@ -149,9 +149,12 @@ class Interface
     show_all_stations
     print 'На какую станцию добавить поезд (выберете номер из списка)? '
     number = gets.to_i
-    @all_stations.each.with_index(1) { |station, index|
-    station.parking_trains(train) if number == index }
+    @all_stations.each.with_index(1) do |station, index|
+      station.parking_trains(train) if number == index
+    end
+
     puts "Вы добавили поезд №_#{train.number} на станцию #{@all_stations[number - 1].name}."
+    return_to_menu
   end
 
   def create_new_route
@@ -174,24 +177,28 @@ class Interface
     show_all_stations
     start_input = gets.to_i
     start_station = ''
-    @all_stations.each.with_index(1) { |station, index|
-      start_station = station if start_input == index }
+    @all_stations.each.with_index(1) do |station, index|
+      start_station = station if start_input == index
+    end
 
-    stations_without_start_stations = @all_stations.select { |station|
-      station != start_station }
+    stations_without_start_stations = @all_stations.reject do |station|
+      station == start_station
+    end
     puts 'Выберете конечную станцию (введите номер) из предложенных:'
-    stations_without_start_stations.each.with_index(1) { |station, index|
-      puts "#{index}. #{station.name}"}
+    stations_without_start_stations.each.with_index(1) do |station, index|
+      puts "#{index}. #{station.name}"
+    end
 
     finish_input = gets.chomp.to_i
     finish_station = ''
-    stations_without_start_stations.each.with_index(1) { |station, index|
-      finish_station = station if finish_input == index }
+    stations_without_start_stations.each.with_index(1) do |station, index|
+      finish_station = station if finish_input == index
+    end
 
     route = Route.new(number, start_station, finish_station)
     puts 'Вы создали маршрут:'
-    puts "Номер маршрута: #{number}\nНачальная станция: #{start_station.name}\n
-      \rКонечная станция: #{finish_station.name}"
+    puts %{Номер маршрута: #{number}\nНачальная станция: #{start_station.name}
+      \rКонечная станция: #{finish_station.name}}
     return_to_menu
 
     @all_routes << route
@@ -207,43 +214,45 @@ class Interface
   def is_there_route?
     @a = - 1
     @get_route_number = gets.chomp.to_i
-    @all_routes.each.with_index { |route, index|
+    @all_routes.each.with_index do |route, index|
       if route.route_number == @get_route_number
         @count = index
         @a = index
         @selected_route = route
-      end }
-
-      if @a == -1
-        puts 'Такого маршрута не существует. Попробуйте создать.'
       end
+    end
+
+      puts 'Такого маршрута не существует. Попробуйте создать.' if @a == -1
+
       return @a
   end
 
   def add_station_to_route!
-        @all_routes.delete_at(@count)
-        @selected_route.all_stations_of_route
-        print 'На какое по порядку место хотите добавить станцию? '
-        number = gets.chomp.to_i
+    @all_routes.delete_at(@count)
+    @selected_route.all_stations_of_route
+    print 'На какое по порядку место хотите добавить станцию? '
+    number = gets.chomp.to_i
     
-        puts 'Какую станцию хотите добавить (введите номер из списка) из имеющихся:'
-        available_stations = []
-        @all_stations.each { |station|
-          if !@selected_route.route_stations.include?(station.name)
-            available_stations << station
-          end }
-        puts 'Все существующие станции уже добавлены. 
-        Создайте новую станцию.' if available_stations == 0
-        available_stations.each.with_index(1) { |station, index|
-          puts "#{index}. #{station.name}" }
+    puts 'Какую станцию хотите добавить (введите номер из списка) из имеющихся:'
+    available_stations = []
+    @all_stations.each do |station|
+      if !@selected_route.route_stations.include?(station.name)
+        available_stations << station
+      end
+    end
+    puts 'Все существующие станции уже добавлены. 
+    Создайте новую станцию.' if available_stations.size == 0
+    available_stations.each.with_index(1) do |station, index|
+      puts "#{index}. #{station.name}"
+    end
 
-        place = gets.chomp.to_i
-        station = available_stations[place - 1]
+    place = gets.chomp.to_i
+    station = available_stations[place - 1]
 
-        @selected_route.route_stations.insert(number - 1, station.name)
-        @all_routes.insert(@count, @selected_route)
-        puts "Вы изменили маршрут №_#{@get_route_number}."
-        @selected_route.all_stations_of_route
+    @selected_route.route_stations.insert(number - 1, station)
+    @all_routes.insert(@count, @selected_route)
+    puts "Вы изменили маршрут №_#{@get_route_number}."
+    @selected_route.all_stations_of_route
   end
 
   def delete_station_from_route
@@ -258,13 +267,11 @@ class Interface
     @selected_route.all_stations_of_route
     puts 'Какую станцию хотите удалить (введите номер из списка): '
     number = gets.chomp.to_i
-    @selected_route.route_stations.each.with_index(0) { |station, index|
-      @selected_route.route_stations.delete_at(number) if number == index }
+    @selected_route.route_stations.delete_at(number - 1)
 
     @all_routes.insert(@count, @selected_route)
     puts "Вы изменили маршрут №_#{@get_route_number}."
     @selected_route.all_stations_of_route
-    return_to_menu
   end
 
   def add_route_to_train
@@ -320,8 +327,9 @@ class Interface
   end
 
   def show_all_stations
-    Station.all_instances.each.with_index(1) { |station, index|
-      puts "#{index}. #{station.name}" }
+    Station.all_instances.each.with_index(1) do |station, index|
+      puts "#{index}. #{station.name}"
+    end
   end
 
   def all_stations
@@ -331,21 +339,24 @@ class Interface
   end
 
   def show_all_routes
-    @all_routes.each { |route_stations|
-      route_stations.all_stations_of_route }
+    @all_routes.each do |route_stations|
+      route_stations.all_stations_of_route
+    end
   end
 
   def show_all_trains
-    @all_trains.each.with_index(1) { |train, index|
-      puts "#{index} | Номер (название): #{train.number}; вагонов: #{train.wagons.size}; тип - #{train.class}" }
+    @all_trains.each.with_index(1) do |train, index|
+      puts "#{index} | Номер (название): #{train.number}; вагонов: #{train.wagons.size}; тип - #{train.class}"
+    end
   end
 
   def show_all_trains_on_station
     show_all_stations
     print 'Введите станцию (выберете номер из списка): '
     number = gets.to_i
-    @all_stations.each.with_index(1) { |station, index|
-      station.show_trains_on_station if number == index }
+    @all_stations.each.with_index(1) do |station, index|
+      station.show_trains_on_station if number == index
+    end
     return_to_menu
   end
 
@@ -356,7 +367,6 @@ class Interface
   end
 
   def finding_train
-    #puts Train.all_trains_objects
     puts 'Введите номер (название) поезда, о котором хотите получить информацию: '
     number = gets.chomp.to_s
       if Train.find_train(number)

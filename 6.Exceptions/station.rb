@@ -31,15 +31,18 @@ class Station
   end
 
   def show_trains_on_station
-    @trains.each.with_index(1) { |train, index|
-      puts "#{index}. Номер (название): #{train.number}; тип: #{train.class}; вагонов: #{train.wagons.size}" }
+    @trains.each.with_index(1) do |train, index|
+      puts "#{index}. Номер (название): #{train.number}; тип: #{train.class}; вагонов: #{train.wagons.size}"
+    end
   end
 
   private
 
   def validate!
     raise 'Не введено ни одного символа!' if @name.empty?
-    raise "Станция с таким именем уже существует!" if @@all_instances.select{ |station| station.name == @name }.size != 0
+    raise "Станция с таким именем уже существует!" if
+      @@all_instances.select { |station| station.name == @name }.size != 0
+      
     true
   end
 

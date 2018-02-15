@@ -2,14 +2,16 @@ class Route
   include InstanceCounter
   include Validation
 
-  attr_reader :route_stations, :route_number
+  attr_reader :route_stations, :route_number, :start_station, :finish_station
 
   @@all_routes = []
 
   def initialize(route_number, start_station, finish_station)
     @route_number = route_number
-    @route_stations = [start_station, finish_station]
+    @start_station = start_station
+    @finish_station = finish_station
     validate!
+    @route_stations = [start_station, finish_station]
     @@all_routes << self
     register_instance
   end
@@ -24,16 +26,25 @@ class Route
 
   def all_stations_of_route
     puts "Список станций по маршруту №_#{@route_number}:"
-    @route_stations.each.with_index(1) { |station, index| puts "#{index}. #{station.name}"}
+    @route_stations.each.with_index(1) do |station, index|
+      puts "#{index}. #{station.name}"
+    end
   end
 
   protected
 
   def validate!
     raise 'Не введен номер маршрута!' if @route_number == 0
-    raise 'Не назначена начальная станция!' if @route_stations[0].empty?
-    raise 'Не назначена начальная станция!' if @route_stations[-1].empty?
-    raise 'Такой маршрут уже существует!' if @@all_routes.select{ |route| route.number == @number }.size != 0 
+    raise 'Введенная станция не является экземпляром класса Station!' if
+      !start_station.is_a?( Station )
+    raise 'Введенная станция не является экземпляром класса Station!' if
+      !finish_station.is_a?( Station )
+    @@all_routes.each do |route|
+      raise 'Маршрут с таким номером уже существует!' if
+        route.route_number == route_number
+    end
+    
+    true
   end
 
 end
