@@ -79,7 +79,7 @@ class Train
     end
   end
 
-  def each_wagon_in_train(&block)
+  def each_wagon_in_train
     @wagons.each.with_index(1) { |wagon, index| yield(wagon, index) } if block_given?
   end
 

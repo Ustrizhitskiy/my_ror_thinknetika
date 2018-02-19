@@ -1,27 +1,12 @@
-class CargoWagon
-  #include Manufacturer
-  attr_reader :number, :all_volume, :occupied_volume, :free_volume
-
-  @@number = 0
-
-  def initialize(manufacturer, all_volume)
-    @manufacturer = manufacturer
-    @all_volume = all_volume
-    @occupied_volume = 0
-    @free_volume = @all_volume
-    @@number += 1
-    @number = @@number
-  end
-
+class CargoWagon < Wagon
   def take_some_volume(some_volume)
-    if @free_volume > 0 && (@free_volume - some_volume) >= 0
+    if @free_capacity > 0 && (@free_capacity - some_volume) >= 0
       puts "Вы заняли #{some_volume} единиц объема."
-      @occupied_volume += some_volume
-      @free_volume -= some_volume
-      puts "Свободного объема осталось #{@free_volume} единиц."
+      @occupied_capacity += some_volume
+      @free_capacity -= some_volume
+      puts "Свободного объема осталось #{@free_capacity} единиц."
     else
-      puts "Свободного объема осталось #{@free_volume}."
+      puts "Свободного объема осталось #{@free_capacity}."
     end
   end
-
 end

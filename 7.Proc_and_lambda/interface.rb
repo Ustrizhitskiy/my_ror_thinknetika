@@ -421,15 +421,14 @@ class Interface
 
       if train.is_a?( CargoTrain )
         train.each_wagon_in_train { |wagon, index|
-        puts "#{index}  |  #{wagon.class}  |  свободного объема, ед.: #{wagon.free_volume}  |  зянятый объем, ед.: #{wagon.occupied_volume}" }
+        puts "#{index}  |  #{wagon.class}  |  свободного объема, ед.: #{wagon.free_capacity}  |  зянятый объем, ед.: #{wagon.occupied_capacity}" }
       else
         train.each_wagon_in_train { |wagon, index|
-        puts "#{index}  |  #{wagon.class}  |  свободных мест: #{wagon.free_seats}  |  занято: #{wagon.occupied_seats}" }
+        puts "#{index}  |  #{wagon.class}  |  свободных мест: #{wagon.free_capacity}  |  занято: #{wagon.occupied_capacity}" }
       end
     else
       puts 'Нет ни одного поезда!'
     end
-
   end
 
 end

@@ -30,7 +30,7 @@ class Station
     @trains.delete(train)
   end
 
-  def each_train_on_station(&block)
+  def each_train_on_station
     @trains.each.with_index(1) { |train, index| yield(train, index) } if block_given?
   end
 
@@ -43,5 +43,4 @@ class Station
       
     true
   end
-
 end
