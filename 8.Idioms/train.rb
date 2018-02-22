@@ -65,25 +65,22 @@ class Train
   end
 
   def go_to_next_station
-    if @route && @station_index < (@route.route_stations.size - 1)
-      @route.route_stations[@station_index].leaving_trains(self)
-      @station_index += 1
-      @route.route_stations[@station_index].parking_trains(self)
-    end
+    return unless @route && @station_index < (@route.route_stations.size - 1)
+    @route.route_stations[@station_index].leaving_trains(self)
+    @station_index += 1
+    @route.route_stations[@station_index].parking_trains(self)
   end
 
   def go_to_previos_station
-    if @route && @station_index >= 1
-      @route.route_stations[@station_index].leaving_trains(self)
-      @station_index -= 1
-      @route.route_stations[@station_index].parking_trains(self)
-    end
+    return unless @route && @station_index >= 1
+    @route.route_stations[@station_index].leaving_trains(self)
+    @station_index -= 1
+    @route.route_stations[@station_index].parking_trains(self)
   end
 
   def each_wagon_in_train
-    if block_given?
-      @wagons.each.with_index(1) { |wagon, index| yield(wagon, index) }
-    end
+    return unless block_given?
+    @wagons.each.with_index(1) { |wagon, index| yield(wagon, index) }
   end
 
   protected

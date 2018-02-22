@@ -244,9 +244,13 @@ class Interface
     number = available_stations_empty?(available_stations)
     show_available_station(available_stations)
     print 'Какую станцию хотите добавить (введите номер) из имеющихся: '
-    station = available_stations[gets.chomp.to_i - 1]
+    station = available_stations[gets.to_i - 1]
     @selected_route.route_stations.insert(number - 1, station)
     @all_routes.insert(@count, @selected_route)
+    edited_route
+  end
+
+  def edited_route
     puts "Вы изменили маршрут №_#{@get_route_number}."
     @selected_route.all_stations_of_route
   end
@@ -271,12 +275,11 @@ class Interface
   def add_route_to_train
     show_all_routes
     print 'Введите номер маршрута, который собираетесь назначить: '
-    if there_route? != -1
-      puts
-      show_all_trains
-      train = train_choice
-      train.appoint_route(@selected_route)
-    end
+    return unless there_route? != -1
+    puts
+    show_all_trains
+    train = train_choice
+    train.appoint_route(@selected_route)
   end
 
   def create_cargo_wagon(train)

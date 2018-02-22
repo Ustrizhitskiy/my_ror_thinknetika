@@ -1,7 +1,7 @@
 module Validation
   def valid?
     validate!
-  rescue
+  rescue RuntimeError
     false
   end
 end
