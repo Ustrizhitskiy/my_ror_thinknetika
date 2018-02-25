@@ -94,7 +94,7 @@ class Interface
     gets
   end
 
-  def  create_new_station
+  def create_new_station
     puts 'Введите название станции:'
     name = gets.chomp.to_s
     @all_stations << Station.new(name)
@@ -179,7 +179,7 @@ class Interface
   end
 
   def create_new_route!
-    print "Введите номер маршрута: "
+    print 'Введите номер маршрута: '
     number = gets.to_i
     puts 'Выберете начальную станцию (введите номер) из имеющихся:'
     show_all_stations
@@ -230,9 +230,9 @@ class Interface
       end
     end
 
-      puts 'Такого маршрута не существует. Попробуйте создать.' if @a == -1
+    puts 'Такого маршрута не существует. Попробуйте создать.' if @a == -1
 
-      return @a
+    return @a
   end
 
   def add_station_to_route!
@@ -369,8 +369,9 @@ class Interface
 
     if @all_stations.size > 0
       station = @all_stations[number - 1]
-      station.each_train_on_station { |train, index|
-        puts "#{index}  |  Номер (название): #{train.number}; тип: #{train.class}; вагонов: #{train.wagons.size}" }
+      station.each_train_on_station do |train, index|
+        puts "#{index}  |  Номер (название): #{train.number}; тип: #{train.class}; вагонов: #{train.wagons.size}"
+      end
     else
       puts 'Не создано ни одной станции!'
     end
@@ -399,7 +400,7 @@ class Interface
     show_all_trains
     train = train_choice
     wagon = wagon_choice(train)
-    if wagon.is_a?( CargoWagon )
+    if wagon.is_a?(CargoWagon)
       print 'Какой объем планируете занять, ед. : '
       volume = gets.chomp.to_i
       wagon.take_some_volume(volume)
