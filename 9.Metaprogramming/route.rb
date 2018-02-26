@@ -5,7 +5,7 @@ class Route
 
   attr_reader :route_stations, :route_number, :start_station, :finish_station
 
-  validate :route_number, :validation_presence
+  validate :route_number, :presence
 
   @@all_routes = []
 

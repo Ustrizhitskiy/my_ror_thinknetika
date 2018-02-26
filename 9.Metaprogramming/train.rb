@@ -9,7 +9,7 @@ class Train
   attr_reader :number, :route, :wagons
   attr_writer :speed
   attr_accessor_with_history :example1, :example2
-  strong_attr_accessor :var, Integer
+  strong_attr_accessor :example, Integer
 
   @@all_trains_objects = {}
 

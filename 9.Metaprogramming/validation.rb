@@ -32,20 +32,21 @@ module Validation
 
     protected
 
-    def validation_presence(attribute_name, _args)
-      raise "\nНе введено ни одного символа!" if
-      attribute_name.to_s.empty? || attribute_name.nil? || attribute_name == 0
+    def presence(attr_name, _args)
+      return unless attr_name.to_s.empty? || attr_name.nil? || attr_name == 0
+      raise "\nНе введено ни одного символа!"
     end
 
-    def validation_format(attribute_name, value)
-      return unless attribute_name !~ value
+    def format(attr_name, value)
+      return unless attr_name !~ value
       raise "\nНеправильный формат! Необходимо: ххх-хх,
-        \rгде х - любая буква латинского алфавита или цифра!"
+            \rгде х - любая буква латинского алфавита или цифра!"
     end
 
-    def validation_type(attribute_name, class_name)
-      raise "\nПоследовательность не является строкой!" unless
-        attribute_name.is_a? class_name
+    def type(attr_name, class_name)
+      unless attr_name.is_a? class_name
+        raise "\nПоследовательность не является строкой!"
+      end
     end
   end
 end

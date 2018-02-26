@@ -4,7 +4,7 @@ class Station
 
   attr_reader :name, :trains
 
-  validate :name, :validation_presence
+  validate :name, :presence
 
   @@all_instances = []
 
@@ -34,10 +34,8 @@ class Station
   end
 
   def each_train_on_station
-    if block_given? @trains.each.with_index(1) do |train, index|
-      yield(train, index)
-    end
-    end
+    return unless block_given?
+    @trains.each.with_index(1) { |train, index| yield(train, index) }
   end
 
   private
